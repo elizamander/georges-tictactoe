@@ -37,7 +37,7 @@ buf.pixelDensity(1); // ← fix
 
 **Symptom:** Letters were bigger but still hard to read. The font's proportional letterforms didn't sample cleanly onto the 20px grid.
 
-**Fix (in progress):** Switched the render font to **Courier New Bold**. Monospace fonts have consistent character widths and thick, simple strokes that align better with a regular dot grid. No CDN dependency — Courier New is available in all browsers.
+**Fix (attempt 1):** Switched the render font to **Courier New Bold**. Monospace fonts have consistent character widths and thick, simple strokes that align better with a regular dot grid. No CDN dependency — Courier New is available in all browsers.
 
 ```js
 buf.textFont('Courier New');
@@ -45,7 +45,7 @@ buf.textStyle(BOLD);
 buf.textSize(200);
 ```
 
-Further tuning (step size, font size, dot radius in text mode) to be continued.
+**Fix (attempt 2 — Bug 3 final fix):** Shrunk dot radius (7→4px) and tightened field spacing (40→28px). With 14px-diameter dots and a 20px sampling step, adjacent text-dots had only a 6px gap and nearly merged into a solid mass. Reducing radius to 4px (8px diameter) opens the gap to 12px — each dot is now visually distinct. Halving the field spacing to 28px keeps background density similar (~2× more dots, same area coverage feeling) and ensures enough dots exist for both text and exile positions.
 
 ---
 
@@ -56,5 +56,6 @@ Further tuning (step size, font size, dot radius in text mode) to be continued.
 | Sampling step | 20px |
 | Font | Courier New Bold |
 | Font size | 200px |
-| Dot radius | 7px (14px diameter) |
+| Dot radius | 4px (8px diameter) |
+| Field spacing | 28px |
 | Pixel density on buffer | 1 |

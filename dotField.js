@@ -4,9 +4,8 @@ class DotField {
     this._buildField();
   }
 
-  _buildField() {
+  _buildField(spacing = 28) {
     this.dots = [];
-    const spacing = 40;
     const cols = Math.ceil(width / spacing) + 1;
     const rows = Math.ceil(height / spacing) + 1;
 
@@ -22,14 +21,11 @@ class DotField {
   }
 
   rebuild() {
-    // Recompute home positions after window resize
-    const spacing = 40;
-    const cols = Math.ceil(width / spacing) + 1;
-    const rows = Math.ceil(height / spacing) + 1;
-    const needed = cols * rows;
-
-    // Rebuild from scratch for simplicity
     this._buildField();
+  }
+
+  rebuildWithSpacing(spacing) {
+    this._buildField(spacing);
   }
 
   update(mX, mY) {
@@ -52,7 +48,10 @@ class DotField {
     }
   }
 
-  getTextPixels(word) {
+  getTextPixels(lines, fontSize) {
+    // lines: string or array of strings to render
+    if (typeof lines === 'string') lines = [lines];
+
     const buf = createGraphics(width, height);
     buf.pixelDensity(1); // force 1:1 so pixel index math is simple
     buf.background(0);
@@ -61,12 +60,23 @@ class DotField {
     buf.textAlign(CENTER, CENTER);
     buf.textFont('Courier New');
     buf.textStyle(BOLD);
-    buf.textSize(200);
-    buf.text(word, width / 2, height / 2);
+    buf.textSize(fontSize);
+
+    if (lines.length === 1) {
+      buf.text(lines[0], width / 2, height / 2);
+    } else {
+      const lineSpacing = fontSize * 1.1;
+      const totalHeight = (lines.length - 1) * lineSpacing;
+      const startY = height / 2 - totalHeight / 2;
+      for (let i = 0; i < lines.length; i++) {
+        buf.text(lines[i], width / 2, startY + i * lineSpacing);
+      }
+    }
+
     buf.loadPixels();
 
     const positions = [];
-    const step = 20;
+    const step = 14;
     for (let y = 0; y < height; y += step) {
       for (let x = 0; x < width; x += step) {
         const idx = (y * width + x) * 4;
@@ -81,7 +91,10 @@ class DotField {
   }
 
   formText(word) {
-    const targets = this.getTextPixels(word);
+    const words = word.split(' ');
+    const lines = words.length > 1 ? words : [word];
+    const fontSize = lines.length > 1 ? 280 : 300;
+    const targets = this.getTextPixels(lines, fontSize);
 
     // Build exile positions evenly around 4 edges
     const exilePositions = this._getExilePositions(this.dots.length);

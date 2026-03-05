@@ -26,6 +26,7 @@ function draw() {
       gridOpacity = Math.max(0, gridOpacity - 8);
       if (gridOpacity === 0 && !textFormed) {
         const word = game.state === 'win' ? 'YOU WON!' : 'DRAW';
+        dotField.rebuildWithSpacing(16);
         dotField.formText(word);
         textFormed = true;
       }
@@ -39,6 +40,7 @@ function draw() {
     if (gridOpacity >= 255 && dotField.allNearHome()) {
       game.reset();
       cursor.active = false;
+      dotField.rebuild();
       // state is now 'playing' after reset
     }
   }
