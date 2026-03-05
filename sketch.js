@@ -82,7 +82,7 @@ function drawResetPrompt() {
   textSize(20);
   noStroke();
   fill(255, 255, 255, 180);
-  text("Press ENTER to play again", width / 2, height - 20);
+  text("Tap or press ENTER to play again", width / 2, height - 20);
   pop();
 }
 
@@ -106,6 +106,24 @@ function mouseClicked() {
   if (cell) {
     attemptPlacement(cell.row, cell.col);
   }
+}
+
+function touchStarted() {
+  if (game.state === 'playing') {
+    const cell = grid.cellAt(mouseX, mouseY);
+    if (cell) {
+      attemptPlacement(cell.row, cell.col);
+    }
+  } else if ((game.state === 'win' || game.state === 'draw') && textFormed) {
+    game.state = 'resetting';
+    dotField.returnToField();
+    gridOpacity = 0;
+  }
+  return false;
+}
+
+function touchMoved() {
+  return false;
 }
 
 function keyPressed() {

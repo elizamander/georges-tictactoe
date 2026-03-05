@@ -7,7 +7,7 @@ class Dot {
     this.vx = 0;
     this.vy = 0;
     this.color = dotColor; // 'yellow' | 'green'
-    this.baseRadius = 4;
+    this.baseRadius = Math.min(width, height) * 0.005;
     this.targetX = homeX;
     this.targetY = homeY;
     this.mode = 'field'; // 'field' | 'text' | 'exile'

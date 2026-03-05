@@ -4,8 +4,8 @@ class Grid {
   }
 
   reposition(canvasW, canvasH) {
-    this.cellSize = Math.min(canvasW, canvasH) * 0.10;
-    const totalSize = this.cellSize * 6;
+    const totalSize = Math.min(canvasW * 0.85, canvasH * 0.67);
+    this.cellSize = totalSize / 6;
     this.x = (canvasW - totalSize) / 2;
     this.y = (canvasH - totalSize) / 2;
     this.w = totalSize;

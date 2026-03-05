@@ -93,8 +93,8 @@ class DotField {
   formText(word) {
     const words = word.split(' ');
     const lines = words.length > 1 ? words : [word];
-    const fontSize = lines.length > 1 ? 280 : 300;
-    const targets = this.getTextPixels(lines, fontSize);
+    const baseFontSize = Math.min(width * 0.35, lines.length > 1 ? 280 : 300);
+    const targets = this.getTextPixels(lines, baseFontSize);
 
     // Build exile positions evenly around 4 edges
     const exilePositions = this._getExilePositions(this.dots.length);
