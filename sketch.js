@@ -43,7 +43,9 @@ function draw() {
   }
 
   if ((appState === 'win' || appState === 'draw') && textFormed) {
-    menu.draw(255, height * 0.8);
+    const fs = min(width * 0.075, 48);
+    const optH = fs * 1.6;
+    menu.draw(255, height - optH / 2 - 35, fs);
   }
 }
 

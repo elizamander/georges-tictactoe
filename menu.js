@@ -1,51 +1,51 @@
 class Menu {
   constructor() {
     this.options = [
-      { size: 3, winLength: 3, label: '3×3 / 3-to-win' },
-      { size: 4, winLength: 3, label: '4×4 / 3-to-win' },
-      { size: 5, winLength: 4, label: '5×5 / 4-to-win' },
-      { size: 6, winLength: 4, label: '6×6 / 4-to-win' },
+      { size: 3, winLength: 3, label: '3×3' },
+      { size: 5, winLength: 4, label: '5×5' },
+      { size: 6, winLength: 4, label: '6×6' },
     ];
     this.selectedIndex = -1;
     this._rects = [];
-    this._previewSize = 0;
-    this._labelH = 30;
-    this._pad = 8;
+    this._optH = 0;
+    this._fontSize = 0;
   }
 
-  computeLayout(centerY) {
-    const previewSize = min(width, height) * 0.13;
-    const gap = previewSize * 0.4;
-    const totalW = 4 * previewSize + 3 * gap;
+  computeLayout(centerY, fontSize) {
+    if (fontSize === undefined) fontSize = min(width * 0.09, 60);
+    this._fontSize = fontSize;
+    const optW = fontSize * 2.6;
+    const optH = fontSize * 1.6;
+    const gap = fontSize * 0.9;
+    const totalW = this.options.length * optW + (this.options.length - 1) * gap;
     const startX = (width - totalW) / 2;
+    this._optH = optH;
 
-    this._previewSize = previewSize;
     this._rects = this.options.map((_, i) => ({
-      x: startX + i * (previewSize + gap),
-      y: centerY - previewSize / 2,
-      w: previewSize,
-      h: previewSize,
+      x: startX + i * (optW + gap),
+      y: centerY - optH / 2,
+      w: optW,
+      h: optH,
     }));
   }
 
   getBoundingRect() {
     if (!this._rects.length) return { x: 0, y: 0, w: width, h: height };
-    const margin = 40;
+    const margin = 50;
     const first = this._rects[0];
     const last = this._rects[this._rects.length - 1];
     return {
       x: first.x - margin,
       y: first.y - margin,
       w: (last.x + last.w) - first.x + 2 * margin,
-      h: first.h + this._labelH + 8 + 2 * margin,
+      h: this._optH + 2 * margin,
     };
   }
 
   optionAt(px, py) {
     for (let i = 0; i < this._rects.length; i++) {
       const r = this._rects[i];
-      if (px >= r.x - this._pad && px <= r.x + r.w + this._pad &&
-          py >= r.y - this._pad && py <= r.y + r.h + this._labelH + this._pad) {
+      if (px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h) {
         return i;
       }
     }
@@ -73,56 +73,38 @@ class Menu {
     }
   }
 
-  draw(opacity, centerY) {
-    if (centerY !== undefined) this.computeLayout(centerY);
+  draw(opacity, centerY, fontSize) {
+    if (centerY !== undefined) this.computeLayout(centerY, fontSize);
     if (!this._rects.length || opacity <= 0) return;
 
     push();
+    textFont('Courier New');
+    textStyle(BOLD);
+    textAlign(CENTER, CENTER);
 
     for (let i = 0; i < this.options.length; i++) {
       const opt = this.options[i];
       const r = this._rects[i];
       const isSelected = this.selectedIndex === i;
-      const baseAlpha = opacity * (isSelected ? 1.0 : 0.65);
+      const baseAlpha = opacity * (isSelected ? 1.0 : 0.6);
+      const pad = 6;
 
       if (isSelected) {
         noStroke();
         fill(255, 255, 255, 60 * opacity / 255);
-        rect(r.x - this._pad, r.y - this._pad,
-             r.w + this._pad * 2, r.h + this._labelH + 8 + this._pad * 2, 4);
+        rect(r.x - pad, r.y - pad, r.w + pad * 2, r.h + pad * 2, 4);
         stroke(255, 255, 255, 180 * opacity / 255);
         strokeWeight(2);
         noFill();
-        rect(r.x - this._pad, r.y - this._pad,
-             r.w + this._pad * 2, r.h + this._labelH + 8 + this._pad * 2, 4);
+        rect(r.x - pad, r.y - pad, r.w + pad * 2, r.h + pad * 2, 4);
       }
-
-      this._drawMiniGrid(opt.size, r.x, r.y, r.w, r.h, baseAlpha);
 
       noStroke();
       fill(255, 255, 255, baseAlpha);
-      textAlign(CENTER, TOP);
-      textFont('Courier New');
-      textStyle(NORMAL);
-      textSize(max(10, this._previewSize * 0.13));
-      text(opt.label, r.x + r.w / 2, r.y + r.h + 8);
+      textSize(this._fontSize);
+      text(opt.label, r.x + r.w / 2, r.y + r.h / 2);
     }
 
-    pop();
-  }
-
-  _drawMiniGrid(size, x, y, w, h, alpha) {
-    push();
-    stroke(255, 255, 255, alpha);
-    strokeWeight(1.5);
-    noFill();
-    rect(x, y, w, h);
-    const cw = w / size;
-    const ch = h / size;
-    for (let i = 1; i < size; i++) {
-      line(x + i * cw, y, x + i * cw, y + h);
-      line(x, y + i * ch, x + w, y + i * ch);
-    }
     pop();
   }
 }

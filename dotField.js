@@ -144,15 +144,28 @@ class DotField {
   }
 
   formMenuClearance(rect) {
-    const exilePositions = this._getExilePositions(this.dots.length);
-    let exileIdx = 0;
+    // Distribute displaced dots along on-screen edges so they drift naturally
+    // and don't jet in from off-screen when the menu is dismissed.
+    const spacing = 28;
+    const edgePositions = [];
+    for (let x = 0; x < width + spacing; x += spacing) {
+      edgePositions.push({ x, y: spacing / 2 });
+      edgePositions.push({ x, y: height - spacing / 2 });
+    }
+    for (let y = spacing; y < height - spacing; y += spacing) {
+      edgePositions.push({ x: spacing / 2, y });
+      edgePositions.push({ x: width - spacing / 2, y });
+    }
+
+    let edgeIdx = 0;
     for (let dot of this.dots) {
       if (dot.homeX >= rect.x && dot.homeX <= rect.x + rect.w &&
           dot.homeY >= rect.y && dot.homeY <= rect.y + rect.h) {
-        dot.targetX = exilePositions[exileIdx % exilePositions.length].x;
-        dot.targetY = exilePositions[exileIdx % exilePositions.length].y;
-        dot.mode = 'exile';
-        exileIdx++;
+        const pos = edgePositions[edgeIdx % edgePositions.length];
+        dot.targetX = pos.x;
+        dot.targetY = pos.y;
+        dot.mode = 'field';
+        edgeIdx++;
       } else {
         dot.targetX = dot.homeX;
         dot.targetY = dot.homeY;
