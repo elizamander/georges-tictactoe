@@ -143,6 +143,24 @@ class DotField {
     return positions;
   }
 
+  formMenuClearance(rect) {
+    const exilePositions = this._getExilePositions(this.dots.length);
+    let exileIdx = 0;
+    for (let dot of this.dots) {
+      if (dot.homeX >= rect.x && dot.homeX <= rect.x + rect.w &&
+          dot.homeY >= rect.y && dot.homeY <= rect.y + rect.h) {
+        dot.targetX = exilePositions[exileIdx % exilePositions.length].x;
+        dot.targetY = exilePositions[exileIdx % exilePositions.length].y;
+        dot.mode = 'exile';
+        exileIdx++;
+      } else {
+        dot.targetX = dot.homeX;
+        dot.targetY = dot.homeY;
+        dot.mode = 'field';
+      }
+    }
+  }
+
   returnToField() {
     for (let dot of this.dots) {
       dot.targetX = dot.homeX;

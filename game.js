@@ -1,10 +1,12 @@
 class Game {
-  constructor() {
+  constructor(gridSize = 6, winLength = 4) {
+    this.gridSize = gridSize;
+    this.winLength = winLength;
     this.reset();
   }
 
   reset() {
-    this.board = Array.from({ length: 6 }, () => Array(6).fill(null));
+    this.board = Array.from({ length: this.gridSize }, () => Array(this.gridSize).fill(null));
     this.currentPlayer = 'O';
     this.state = 'playing';
     this.winner = null;
@@ -53,14 +55,14 @@ class Game {
           c += dc;
         }
       }
-      if (cells.length >= 4) return cells.slice(0, 4);
+      if (cells.length >= this.winLength) return cells.slice(0, this.winLength);
     }
     return null;
   }
 
   checkDraw() {
-    for (let r = 0; r < 6; r++) {
-      for (let c = 0; c < 6; c++) {
+    for (let r = 0; r < this.gridSize; r++) {
+      for (let c = 0; c < this.gridSize; c++) {
         if (this.board[r][c] === null) return false;
       }
     }
@@ -68,6 +70,6 @@ class Game {
   }
 
   _inBounds(r, c) {
-    return r >= 0 && r < 6 && c >= 0 && c < 6;
+    return r >= 0 && r < this.gridSize && c >= 0 && c < this.gridSize;
   }
 }

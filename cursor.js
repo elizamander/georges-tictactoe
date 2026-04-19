@@ -1,5 +1,6 @@
 class Cursor {
-  constructor() {
+  constructor(gridSize = 6) {
+    this.gridSize = gridSize;
     this.row = 0;
     this.col = 0;
     this.active = false;
@@ -12,9 +13,9 @@ class Cursor {
   move(dir) {
     switch (dir) {
       case 'up':    this.row = max(0, this.row - 1); break;
-      case 'down':  this.row = min(5, this.row + 1); break;
+      case 'down':  this.row = min(this.gridSize - 1, this.row + 1); break;
       case 'left':  this.col = max(0, this.col - 1); break;
-      case 'right': this.col = min(5, this.col + 1); break;
+      case 'right': this.col = min(this.gridSize - 1, this.col + 1); break;
     }
   }
 

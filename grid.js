@@ -1,11 +1,12 @@
 class Grid {
-  constructor(canvasW, canvasH) {
+  constructor(canvasW, canvasH, gridSize = 6) {
+    this.gridSize = gridSize;
     this.reposition(canvasW, canvasH);
   }
 
   reposition(canvasW, canvasH) {
     const totalSize = Math.min(canvasW * 0.85, canvasH * 0.67);
-    this.cellSize = totalSize / 6;
+    this.cellSize = totalSize / this.gridSize;
     this.x = (canvasW - totalSize) / 2;
     this.y = (canvasH - totalSize) / 2;
     this.w = totalSize;
@@ -34,7 +35,7 @@ class Grid {
     }
     const col = Math.floor((px - this.x) / this.cellSize);
     const row = Math.floor((py - this.y) / this.cellSize);
-    if (row < 0 || row >= 6 || col < 0 || col >= 6) return null;
+    if (row < 0 || row >= this.gridSize || col < 0 || col >= this.gridSize) return null;
     return { row, col };
   }
 
@@ -50,10 +51,8 @@ class Grid {
     rect(this.x, this.y, this.w, this.h);
 
     // Internal lines
-    for (let i = 1; i < 6; i++) {
-      // Vertical
+    for (let i = 1; i < this.gridSize; i++) {
       line(this.x + i * this.cellSize, this.y, this.x + i * this.cellSize, this.y + this.h);
-      // Horizontal
       line(this.x, this.y + i * this.cellSize, this.x + this.w, this.y + i * this.cellSize);
     }
 
@@ -69,8 +68,8 @@ class Grid {
 
     // Draw markers
     noFill();
-    for (let row = 0; row < 6; row++) {
-      for (let col = 0; col < 6; col++) {
+    for (let row = 0; row < this.gridSize; row++) {
+      for (let col = 0; col < this.gridSize; col++) {
         const marker = board[row][col];
         if (!marker) continue;
 
